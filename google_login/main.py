@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+import base64
+import cryptography
 from pathlib import Path
 from typing import Any, Dict
 
@@ -8,10 +10,7 @@ from aiohttp import web
 from aiohttp_jinja2 import setup as jinja2_setup, template
 from aiohttp_session import SimpleCookieStorage, get_session, setup as session_setup
 from aiohttp_oauth2 import oauth2_app
-import jwt
-
-
-from aiohttp_oauth2.client.contrib import github
+from aiohttp_session.cookie_storage import EncryptedCookieStorage
 
 
 @template("index.html")
@@ -49,12 +48,15 @@ async def on_github_login(request: web.Request, github_token):
 
 
 def app_factory() -> web.Application:
+    fernet_key = cryptography.fernet.Fernet.generate_key()
+    secret_key = base64.urlsafe_b64decode(fernet_key)
     app = web.Application()
-
+    # session_setup(app, SimpleCookieStorage())  # used for testing purpose
+    session_setup(app, EncryptedCookieStorage(secret_key))
     jinja2_setup(
         app, loader=jinja2.FileSystemLoader([Path(__file__).parent / "templates"])
     )
-    session_setup(app, SimpleCookieStorage())
+
     app.add_subapp(
         "/google/",
         oauth2_app(

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os
 import base64
 import cryptography
@@ -77,4 +76,4 @@ def app_factory() -> web.Application:
 
 
 if __name__ == "__main__":
-    web.run_app(app_factory(), host="localhost")
+    web.run_app(app_factory(), host="0.0.0.0", port=80)

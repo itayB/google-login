@@ -59,7 +59,7 @@ async def index(request: web.Request) -> Dict[str, Any]:
 async def logout(request: web.Request):
     session = await get_session(request)
     session.invalidate()
-    return web.HTTPTemporaryRedirect(location="/")
+    return web.HTTPTemporaryRedirect(location='/')
 
 
 async def on_google_error(request: web.Request):
@@ -70,16 +70,15 @@ async def on_google_login(request: web.Request, login_data):
     session = await get_session(request)
     id_token = login_data.get('id_token')
     access_token = login_data.get('access_token')
-    print('token: ' + str(id_token))
-    print('session: ' + str(session))
-    print('access_token: ' + login_data['access_token'])
-    async with request.app["session"].get(
-            "https://oauth2.googleapis.com/tokeninfo?id_token=" + id_token,
-            headers={"Authorization": f"Bearer {access_token}"},
+    logger.debug('token: ' + str(id_token))
+    logger.debug('session: ' + str(session))
+    logger.debug('access_token: ' + str(access_token))
+    async with request.app['session'].get(
+            'https://oauth2.googleapis.com/tokeninfo?id_token=' + id_token,
+            headers={'Authorization': f'Bearer {access_token}'},
     ) as r:
-        print('r: ' + str(r))
         user_info = await r.json()
-        session["user"] = user_info.get('name')
+        session['user'] = user_info.get('name')
     return web.HTTPTemporaryRedirect(location="/")
 
 

@@ -1,5 +1,4 @@
 aiohttp==3.6.2
 aiohttp-jinja2==1.1.1
-aiohttp-oauth2==0.0.4
 aiohttp-session==2.7.0
 cryptography==2.8

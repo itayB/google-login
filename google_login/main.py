@@ -63,7 +63,7 @@ async def logout(request: web.Request):
 
 
 async def on_google_error(request: web.Request):
-    print(request)
+    logger.warning(request)
 
 
 async def on_google_login(request: web.Request, login_data):

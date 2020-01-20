@@ -1,15 +1,13 @@
-import logging
-from typing import Any, Callable, Dict, List, Optional
-import os
 import base64
 import cryptography
-from pathlib import Path
-from typing import Any, Dict
-
 import jinja2
+import logging
+import os
+from typing import Any, Callable, Dict, List, Optional
+from pathlib import Path
 from aiohttp import ClientSession, web
 from aiohttp_jinja2 import setup as jinja2_setup, template
-from aiohttp_session import SimpleCookieStorage, get_session, setup as session_setup
+from aiohttp_session import get_session, setup as session_setup
 from aiohttp_session.cookie_storage import EncryptedCookieStorage
 from oauth2 import routes
 
@@ -52,8 +50,10 @@ def oauth2_app(
 @template("index.html")
 async def index(request: web.Request) -> Dict[str, Any]:
     session = await get_session(request)
-    print(session)
-    return {"user": session.get("user")}
+    logger.debug(session)
+    return {
+        'user': session.get('user')
+    }
 
 
 async def logout(request: web.Request):
@@ -80,7 +80,6 @@ async def on_google_login(request: web.Request, login_data):
         print('r: ' + str(r))
         user_info = await r.json()
         session["user"] = user_info.get('name')
-        # print('body: ' + str(r.body))
     return web.HTTPTemporaryRedirect(location="/")
 
 
@@ -109,7 +108,6 @@ def app_factory(client_id: str, client_secret: str) -> web.Application:
     )
 
     app.add_routes([web.get("/", index), web.get("/auth/logout", logout)])
-
     return app
 
 

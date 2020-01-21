@@ -3,83 +3,14 @@ import cryptography
 import jinja2
 import logging
 import os
-from typing import Any, Callable, Dict, List, Optional
 from pathlib import Path
-from aiohttp import ClientSession, web
-from aiohttp_jinja2 import setup as jinja2_setup, template
-from aiohttp_session import get_session, setup as session_setup
+from aiohttp import web
+from aiohttp_jinja2 import setup as jinja2_setup
+from aiohttp_session import setup as session_setup
 from aiohttp_session.cookie_storage import EncryptedCookieStorage
-from oauth2 import routes
+from oauth2 import oauth2_app, index, logout, on_google_error, on_google_login
 
 logger = logging.getLogger()
-
-
-async def client_session(app: web.Application):
-    async with ClientSession() as session:
-        app["session"] = session
-        yield
-
-
-def oauth2_app(
-        client_id: str,
-        client_secret: str,
-        authorize_url: str,
-        token_url: str,
-        scopes: Optional[List[str]] = None,
-        on_login: Optional[Callable[[web.Request, Dict[str, Any]], web.Response]] = None,
-        on_error: Optional[Callable[[web.Request, str], web.Response]] = None,
-) -> web.Application:
-    auth_app = web.Application()
-
-    auth_app.update(
-        CLIENT_ID=client_id,
-        CLIENT_SECRET=client_secret,
-        AUTHORIZE_URL=authorize_url,
-        TOKEN_URL=token_url,
-        SCOPES=scopes,
-        ON_LOGIN=on_login,
-        ON_ERROR=on_error,
-        DATA_AS_JSON=True,
-        AUTH_EXTRAS={},
-    )
-    auth_app.cleanup_ctx.append(client_session)
-    auth_app.add_routes(routes)
-    return auth_app
-
-
-@template("index.html")
-async def index(request: web.Request) -> Dict[str, Any]:
-    session = await get_session(request)
-    logger.debug(session)
-    return {
-        'user': session.get('user')
-    }
-
-
-async def logout(request: web.Request):
-    session = await get_session(request)
-    session.invalidate()
-    return web.HTTPTemporaryRedirect(location='/')
-
-
-async def on_google_error(request: web.Request):
-    logger.warning(request)
-
-
-async def on_google_login(request: web.Request, login_data):
-    session = await get_session(request)
-    id_token = login_data.get('id_token')
-    access_token = login_data.get('access_token')
-    logger.debug('token: ' + str(id_token))
-    logger.debug('session: ' + str(session))
-    logger.debug('access_token: ' + str(access_token))
-    async with request.app['session'].get(
-            'https://oauth2.googleapis.com/tokeninfo?id_token=' + id_token,
-            headers={'Authorization': f'Bearer {access_token}'},
-    ) as r:
-        user_info = await r.json()
-        session['user'] = user_info.get('name')
-    return web.HTTPTemporaryRedirect(location="/")
 
 
 def app_factory(client_id: str, client_secret: str) -> web.Application:

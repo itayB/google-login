@@ -10,6 +10,8 @@ from aiohttp_session import setup as session_setup
 from aiohttp_session.cookie_storage import EncryptedCookieStorage
 from oauth2 import oauth2_app, index, logout, on_google_error, on_google_login
 
+from google_login.handlers.status_handler import StatusView
+
 logger = logging.getLogger()
 
 
@@ -50,4 +52,8 @@ if __name__ == "__main__":
     if not client_secret:
         logger.warning('CLIENT_SECRET environment variable is missing')
         exit(1)
-    web.run_app(app_factory(client_id, client_secret), host="0.0.0.0", port=80)
+    app = app_factory(client_id, client_secret)
+    app.add_routes([
+        web.view('/status', StatusView)
+    ])
+    web.run_app(app, host="0.0.0.0", port=80)

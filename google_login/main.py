@@ -10,7 +10,8 @@ from aiohttp_session import setup as session_setup
 from aiohttp_session.cookie_storage import EncryptedCookieStorage
 from oauth2 import oauth2_app, index, logout, on_google_error, on_google_login
 
-from google_login.handlers.status_handler import StatusView
+from handlers.status_handler import StatusView
+from prometheus_client import start_http_server
 
 logger = logging.getLogger()
 
@@ -56,4 +57,8 @@ if __name__ == "__main__":
     app.add_routes([
         web.view('/status', StatusView)
     ])
+    logger.warning('start Prometheus server')
+    start_http_server(8000)  # Prometheus metrics server
+    logger.warning('start App server')
     web.run_app(app, host="0.0.0.0", port=80)
+

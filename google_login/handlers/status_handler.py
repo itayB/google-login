@@ -1,8 +1,12 @@
 import logging
 from aiohttp import web
 from aiohttp.abc import Request
+from prometheus_client import Summary
 
 logger = logging.getLogger()
+
+# Create a metric to track time spent and requests made.
+REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
 
 class StatusView(web.View):
@@ -13,6 +17,8 @@ class StatusView(web.View):
         """
         super().__init__(request)
 
+    # Decorate function with metric.
+    @REQUEST_TIME.time()
     async def get(self):
         app = self.request.app
         response = {

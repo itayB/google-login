@@ -1,6 +1,6 @@
 FROM library/python:3.7-slim
 
-COPY requirements.txt /app/
+COPY requirements/production.txt /app/requirements.txt
 WORKDIR /app
 RUN pip3.7 install -r requirements.txt
 COPY . /app

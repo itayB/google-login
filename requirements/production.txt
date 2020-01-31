@@ -2,3 +2,4 @@ aiohttp==3.6.2
 aiohttp-jinja2==1.1.1
 aiohttp-session==2.7.0
 cryptography==2.8
+prometheus-client==0.7.1

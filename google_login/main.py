@@ -10,8 +10,11 @@ from aiohttp_session import setup as session_setup
 from aiohttp_session.cookie_storage import EncryptedCookieStorage
 from oauth2 import oauth2_app, index, logout, on_google_error, on_google_login
 
+from handlers.fake1_view import Fake1View
 from handlers.status_handler import StatusView
 from prometheus_client import start_http_server
+
+from metrics import create_metrics
 
 logger = logging.getLogger()
 
@@ -55,10 +58,11 @@ if __name__ == "__main__":
         exit(1)
     app = app_factory(client_id, client_secret)
     app.add_routes([
-        web.view('/status', StatusView)
+        web.view('/status', StatusView),
+        web.view('/api/v1/fake1', Fake1View),
     ])
-    logger.warning('start Prometheus server')
+
+    app['metrics'] = create_metrics()
     start_http_server(8000)  # Prometheus metrics server
-    logger.warning('start App server')
     web.run_app(app, host="0.0.0.0", port=80)
 

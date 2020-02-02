@@ -5,7 +5,8 @@ services:
       context: .
       dockerfile: GrafanaDockerfile
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - PROMETHEUS_HOST=prometheus
       - PROMETHEUS_PORT=9090
     ports:

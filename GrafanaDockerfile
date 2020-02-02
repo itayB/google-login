@@ -1,0 +1,2 @@
+FROM grafana/grafana:6.6.0
+ADD config/datasource.yml /etc/grafana/provisioning/datasources/datasource.yml

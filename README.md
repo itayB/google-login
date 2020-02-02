@@ -7,7 +7,10 @@ docker-compose build
 docker-compose up
 ```
 
-Open Grafana in http://localhost:3000, add Prometheus data-source (http://prometheus:9090) and create graph with
+Open Grafana in http://localhost:3000, login with user `admin` and password `admin`.
+
+Prometheus data-source (http://prometheus:9090) was already set for you.
+
 `request_processing_seconds_count{}` as the metric.
 
 To see the graph, perform some `GET http://localhost/status` via Chrome.

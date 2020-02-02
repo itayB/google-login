@@ -1,0 +1,8 @@
+# config file version
+apiVersion: 1
+datasources:
+  - name: prometheus
+    type: prometheus
+    url: http://${PROMETHEUS_HOST}:${PROMETHEUS_PORT}
+    access: proxy
+    basicAuth: false

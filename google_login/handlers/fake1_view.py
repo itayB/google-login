@@ -26,7 +26,7 @@ class Fake1View(web.View):
         if num < percentage:
             latency = 0.05  # 50 milliseconds
         else:
-            latency = 0.2  # 200 milliseconds
+            latency = 0.3  # 300 milliseconds
         time.sleep(latency)
         handle_time = time.time() - start_time
         self.metrics.get('request_latency').labels('user1', self.request.path).observe(handle_time)

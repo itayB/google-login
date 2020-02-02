@@ -15,3 +15,6 @@ To see the graph, perform some `GET http://localhost/status` via Chrome.
 
 We will try to measure the 99 percentile, base on [histogram](https://prometheus.io/docs/prometheus/latest/querying/functions/#histogram_quantile) and this [post](https://povilasv.me/prometheus-tracking-request-duration/).
 
+### Testing
+Run `mypy google_login` for a type checking.
+
